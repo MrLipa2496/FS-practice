@@ -1,6 +1,5 @@
 const http = require('http');
 require('dotenv').config();
-require('./dbMongo/mongoose');
 const app = require('./app');
 const controller = require('./socketInit');
 

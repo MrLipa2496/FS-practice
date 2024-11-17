@@ -11,4 +11,4 @@ app.use('/public', express.static('public'));
 app.use(router);
 app.use(handlerError);
 
-module.exports = app();
+module.exports = app;

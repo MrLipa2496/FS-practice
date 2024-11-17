@@ -114,7 +114,7 @@ class CustomerDashboard extends React.Component {
         </div>
         <div className={styles.contestsContainer}>
           {error ? (
-            <TryAgain getData={this.tryToGetContest()} />
+            <TryAgain getData={this.tryToGetContest} />
           ) : (
             <ContestsContainer
               isFetching={this.props.isFetching}

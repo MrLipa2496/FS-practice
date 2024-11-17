@@ -1,28 +1,31 @@
 {
   "development": {
     "username": "postgres",
-    "password": "password",
+    "password": "98505",
     "database": "todo-dev",
-    "host": "db-dev",
+    "host": "localhost",
+    "port": 5000,
     "dialect": "postgres",
     "operatorsAliases": "Op",
     "seederStorage": "sequelize"
   },
   "test": {
     "username": "postgres",
-    "password": "admin",
+    "password": "98505",
     "database": "squad-help-test",
     "host": "localhost",
     "dialect": "postgres",
+    "port": 5000,
     "operatorsAliases": "Op",
     "seederStorage": "sequelize"
   },
   "production": {
     "username": "postgres",
-    "password": "admin",
+    "password": "98505",
     "database": "squad-help-prod",
     "host": "localhost",
     "dialect": "postgres",
+    "port": 5000,
     "operatorsAliases": "Op",
     "seederStorage": "sequelize"
   }

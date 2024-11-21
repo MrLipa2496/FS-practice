@@ -41,9 +41,16 @@ module.exports.dataForContest = async (req, res, next) => {
 };
 
 module.exports.getContestById = async (req, res, next) => {
+  const {
+    params: { id },
+    tokenData: { userId, role },
+  } = req;
+
+  const { CREATOR } = CONSTANTS;
+
   try {
     let contestInfo = await db.Contests.findOne({
-      where: { id: req.headers.contestid },
+      where: { id },
       order: [[db.Offers, 'id', 'asc']],
       include: [
         {
@@ -56,10 +63,7 @@ module.exports.getContestById = async (req, res, next) => {
         {
           model: db.Offers,
           required: false,
-          where:
-            req.tokenData.role === CONSTANTS.CREATOR
-              ? { userId: req.tokenData.userId }
-              : {},
+          where: role === CREATOR ? { userId } : {},
           attributes: { exclude: ['userId', 'contestId'] },
           include: [
             {
@@ -72,20 +76,23 @@ module.exports.getContestById = async (req, res, next) => {
             {
               model: db.Ratings,
               required: false,
-              where: { userId: req.tokenData.userId },
+              where: { userId },
               attributes: { exclude: ['userId', 'offerId'] },
             },
           ],
         },
       ],
     });
+
     contestInfo = contestInfo.get({ plain: true });
+
     contestInfo.Offers.forEach(offer => {
       if (offer.Rating) {
         offer.mark = offer.Rating.mark;
       }
       delete offer.Rating;
     });
+
     res.send(contestInfo);
   } catch (e) {
     next(new ServerError());
@@ -253,14 +260,14 @@ module.exports.setOfferStatus = async (req, res, next) => {
 
 module.exports.getCustomersContests = (req, res, next) => {
   const {
-    query: { limit, offset, status },
+    query: { limit, offset = 0, contestStatus: status },
     tokenData: { userId },
   } = req;
 
   db.Contests.findAll({
     where: { status, userId },
-    limit: limit,
-    offset: offset ? offset : 0,
+    limit,
+    offset,
     order: [['id', 'DESC']],
     include: [
       {
@@ -317,4 +324,25 @@ module.exports.getContests = (req, res, next) => {
     .catch(err => {
       next(new ServerError());
     });
+};
+
+module.exports.getOffers = async (req, res, next) => {
+  const {
+    query: { limit, offset = 0 },
+  } = req;
+
+  try {
+    const foundOffers = await db.Offers.findAll({
+      where: { status: CONSTANTS.OFFER_STATUS_WON },
+      attributes: ['text, fileName'],
+      limit,
+      offset,
+      order: [['id', 'DESC']],
+    });
+
+    const haveMore = foundOffers.length > 0;
+    res.send({ offers, haveMore });
+  } catch (err) {
+    next(new ServerError(err));
+  }
 };

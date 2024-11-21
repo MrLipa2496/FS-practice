@@ -39,19 +39,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  // Offer.associate = function (models) {
-  //   Offer.belongsTo(models.User, { foreignKey: 'user_id', sourceKey: 'id' });
-  // };
-
-  // Offer.associate = function (models) {
-  //   Offer.belongsTo(models.Contest,
-  //     { foreignKey: 'contest_id', sourceKey: 'id' });
-  // };
-
-  Offer.associate = function (models) {
-    Offer.belongsTo(models.Users, {
-      foreignKey: 'userId',
-    });
+  Offer.associate = db => {
+    Offer.belongsTo(db.User, { foreignKey: 'userId', sourceKey: 'id' });
+    Offer.belongsTo(db.Contest, { foreignKey: 'contestId', sourceKey: 'id' });
+    Offer.hasOne(db.Rating, { foreignKey: 'offerId', targetKey: 'id' });
   };
 
   return Offer;

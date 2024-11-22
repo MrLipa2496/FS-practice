@@ -32,4 +32,31 @@ contestsRouter.get(
   contestController.getContestById
 );
 
+contestsRouter.get(
+  '/getAllContests',
+  basicMiddlewares.onlyForCreative,
+  contestController.getContests
+);
+
+contestsRouter.get('/downloadFile/:fileName', contestController.downloadFile);
+
+contestsRouter.post(
+  '/updateContest',
+  upload.updateContestFile,
+  contestController.updateContest
+);
+
+contestsRouter.post(
+  '/setNewOffer',
+  upload.uploadLogoFiles,
+  basicMiddlewares.canSendOffer,
+  contestController.setNewOffer
+);
+
+contestsRouter.post(
+  '/setOfferStatus',
+  basicMiddlewares.onlyForCustomerWhoCreateContest,
+  contestController.setOfferStatus
+);
+
 module.exports = contestsRouter;

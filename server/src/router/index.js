@@ -38,33 +38,6 @@ router.use('/contests', contestsRouter);
 // privat endpoint after checkToken.checkToken
 
 router.post(
-  '/getAllContests',
-  basicMiddlewares.onlyForCreative,
-  contestController.getContests
-);
-
-router.get('/downloadFile/:fileName', contestController.downloadFile);
-
-router.post(
-  '/updateContest',
-  upload.updateContestFile,
-  contestController.updateContest
-);
-
-router.post(
-  '/setNewOffer',
-  upload.uploadLogoFiles,
-  basicMiddlewares.canSendOffer,
-  contestController.setNewOffer
-);
-
-router.post(
-  '/setOfferStatus',
-  basicMiddlewares.onlyForCustomerWhoCreateContest,
-  contestController.setOfferStatus
-);
-
-router.post(
   '/changeMark',
   basicMiddlewares.onlyForCustomer,
   userController.changeMark

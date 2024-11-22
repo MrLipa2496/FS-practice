@@ -90,8 +90,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Contest.associate = db => {
-    Contest.belongsTo(db.User, { foreignKey: 'userId', sourceKey: 'id' });
-    Contest.hasMany(db.Offer, { foreignKey: 'contestId', targetKey: 'id' });
+    Contest.belongsTo(db.Users, { foreignKey: 'userId', sourceKey: 'id' });
+    Contest.hasMany(db.Offers, { foreignKey: 'contestId', targetKey: 'id' });
   };
 
   return Contest;

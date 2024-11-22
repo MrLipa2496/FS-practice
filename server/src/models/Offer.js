@@ -40,9 +40,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Offer.associate = db => {
-    Offer.belongsTo(db.User, { foreignKey: 'userId', sourceKey: 'id' });
-    Offer.belongsTo(db.Contest, { foreignKey: 'contestId', sourceKey: 'id' });
-    Offer.hasOne(db.Rating, { foreignKey: 'offerId', targetKey: 'id' });
+    Offer.belongsTo(db.Users, { foreignKey: 'userId', sourceKey: 'id' });
+    Offer.belongsTo(db.Contests, { foreignKey: 'contestId', sourceKey: 'id' });
+    Offer.hasOne(db.Ratings, { foreignKey: 'offerId', targetKey: 'id' });
   };
 
   return Offer;

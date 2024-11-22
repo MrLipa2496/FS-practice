@@ -62,9 +62,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = db => {
-    User.hasMany(db.Offer, { foreignKey: 'userId', targetKey: 'id' });
-    User.hasMany(db.Contest, { foreignKey: 'userId', targetKey: 'id' });
-    User.hasMany(db.Rating, { foreignKey: 'userId', targetKey: 'id' });
+    User.hasMany(db.Offers, { foreignKey: 'userId', targetKey: 'id' });
+    User.hasMany(db.Contests, { foreignKey: 'userId', targetKey: 'id' });
+    User.hasMany(db.Ratings, { foreignKey: 'userId', targetKey: 'id' });
   };
 
   return User;

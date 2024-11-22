@@ -28,8 +28,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Rating.associate = db => {
-    Rating.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id' });
-    Rating.belongsTo(db.Offer, { foreignKey: 'offerId', targetKey: 'id' });
+    Rating.belongsTo(db.Users, { foreignKey: 'userId', targetKey: 'id' });
+    Rating.belongsTo(db.Offers, { foreignKey: 'offerId', targetKey: 'id' });
   };
 
   return Rating;

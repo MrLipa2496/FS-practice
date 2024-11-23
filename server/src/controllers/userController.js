@@ -170,13 +170,14 @@ module.exports.payment = async (req, res, next) => {
     });
     await bd.Contests.bulkCreate(contests, { transaction });
 
-    const newBankTransaction = {
+    // TODO move to constants
+    const newBankTransacton = {
       amount: price,
       operationType: 'EXPENSE',
       userId,
     };
 
-    await bd.Transactions.create(newBankTransaction, { transaction });
+    await bd.Transactions.create(newBankTransacton, { transaction });
 
     transaction.commit(); // зберігти зміни всіх запитів
     res.send();
@@ -211,6 +212,7 @@ module.exports.updateUser = async (req, res, next) => {
 };
 
 module.exports.cashout = async (req, res, next) => {
+  // TODO destructuring
   let transaction;
   try {
     transaction = await bd.sequelize.transaction();
@@ -221,22 +223,18 @@ module.exports.cashout = async (req, res, next) => {
     );
     await bankQueries.updateBankBalance(
       {
-        balance: bd.sequelize.literal(`CASE 
-                WHEN "cardNumber"='${req.body.number.replace(
-                  / /g,
-                  ''
-                )}' AND "expiry"='${req.body.expiry}' AND "cvc"='${
-          req.body.cvc
-        }'
-                    THEN "balance"+${req.body.sum}
-                WHEN "cardNumber"='${
-                  CONSTANTS.SQUADHELP_BANK_NUMBER
-                }' AND "expiry"='${
-          CONSTANTS.SQUADHELP_BANK_EXPIRY
-        }' AND "cvc"='${CONSTANTS.SQUADHELP_BANK_CVC}'
-                    THEN "balance"-${req.body.sum}
-                 END
-                `),
+        balance: bd.sequelize.literal(`
+          CASE 
+            WHEN "cardNumber"='${req.body.number.replace(/ /g, '')}' 
+              AND "expiry"='${req.body.expiry}' 
+              AND "cvc"='${req.body.cvc}'
+                THEN "balance"+${req.body.sum}
+            WHEN "cardNumber"='${CONSTANTS.SQUADHELP_BANK_NUMBER}'
+              AND "expiry"='${CONSTANTS.SQUADHELP_BANK_EXPIRY}' 
+              AND "cvc"='${CONSTANTS.SQUADHELP_BANK_CVC}'
+                THEN "balance"-${req.body.sum}
+          END
+        `),
       },
       {
         cardNumber: {
@@ -248,10 +246,41 @@ module.exports.cashout = async (req, res, next) => {
       },
       transaction
     );
+
+    // TODO move to constants
+    const newBankTransacton = {
+      amount: req.body.sum,
+      operationType: 'INCOME',
+      userId: req.tokenData.userId,
+    };
+
+    await bd.Transactions.create(newBankTransacton, { transaction });
+
     transaction.commit();
+
     res.send({ balance: updatedUser.balance });
   } catch (err) {
     transaction.rollback();
+    next(err);
+  }
+};
+
+module.exports.getUsersTransactions = async (req, res, next) => {
+  const {
+    query: { limit = 8, offset = 0 },
+    tokenData: { userId },
+  } = req;
+
+  try {
+    const foundTransactions = await bd.Transactions.findAll({
+      where: { userId },
+      limit,
+      offset,
+      raw: true,
+    });
+
+    res.status(200).send(foundTransactions);
+  } catch (err) {
     next(err);
   }
 };

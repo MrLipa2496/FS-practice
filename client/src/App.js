@@ -21,6 +21,7 @@ import Layout from './pages/Layout/Layout';
 import OnlyNotAuthorizedUserRoute from './components/Routes/OnlyNotAuthorizedUserRoute/OnlyNotAuthorizedUserRoute';
 import PrivateRoute from './components/Routes/PrivateRoute/PrivateRoute';
 import PricingPage from './pages/PricingPage/PricingPage';
+import TransactionsPage from './pages/TransactionsPage/TransactionsPage';
 
 class App extends Component {
   render () {
@@ -80,6 +81,7 @@ class App extends Component {
               <Route path='/dashboard' element={<Dashboard />} />
               <Route path='/contest/:id' element={<ContestPage />} />
               <Route path='/account' element={<UserProfile />} />
+              <Route path='/transactions' element={<TransactionsPage />} />
             </Route>
             <Route path='*' element={<NotFound />} />
           </Route>

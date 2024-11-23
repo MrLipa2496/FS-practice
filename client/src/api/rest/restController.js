@@ -30,8 +30,26 @@ export const changeCatalogName = data => http.post('updateNameCatalog', data);
 export const getCustomersContests = data =>
   http.get(`contests/byCustomer?${stringify(data)}`);
 
-export const getActiveContests = data =>
-  http.get(`/contests?${stringify(data)}`);
+export const getActiveContests = ({
+  offset,
+  limit,
+  typeIndex,
+  contestId,
+  industry,
+  awardSort,
+  ownEntries,
+}) =>
+  http.post('getAllContests', {
+    offset,
+    limit,
+    typeIndex,
+    contestId,
+    industry,
+    awardSort,
+    ownEntries,
+  });
 
 export const getContestById = ({ contestId }) =>
   http.get(`contests/${contestId}`);
+
+export const getTransactions = () => http.get('/users/id/transactions');

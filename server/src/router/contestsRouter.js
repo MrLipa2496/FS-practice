@@ -32,6 +32,8 @@ contestsRouter.get(
   contestController.getContestById
 );
 
+contestsRouter.get('/', contestController.getContests);
+
 contestsRouter.get(
   '/getAllContests',
   basicMiddlewares.onlyForCreative,

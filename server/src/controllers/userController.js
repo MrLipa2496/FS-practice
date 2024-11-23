@@ -168,7 +168,16 @@ module.exports.payment = async (req, res, next) => {
         prize,
       });
     });
-    await bd.Contests.bulkCreate(contests, transaction);
+    await bd.Contests.bulkCreate(contests, { transaction });
+
+    const newBankTransaction = {
+      amount: price,
+      operationType: 'EXPENSE',
+      userId,
+    };
+
+    await bd.Transactions.create(newBankTransaction, { transaction });
+
     transaction.commit(); // зберігти зміни всіх запитів
     res.send();
   } catch (err) {

@@ -65,6 +65,14 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(db.Offers, { foreignKey: 'userId', targetKey: 'id' });
     User.hasMany(db.Contests, { foreignKey: 'userId', targetKey: 'id' });
     User.hasMany(db.Ratings, { foreignKey: 'userId', targetKey: 'id' });
+    User.hasMany(db.Transactions, {
+      foreignKey: {
+        name: 'userId',
+        allowNull: false,
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    });
   };
 
   return User;

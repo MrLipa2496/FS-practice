@@ -1,27 +1,43 @@
-'use strict';
-const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Transaction extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate (models) {
-      // define association here
-    }
-  }
-  Transaction.init(
+  const Transaction = sequelize.define(
+    'Transactions',
     {
-      id: DataTypes.INTEGER,
-      amount: DataTypes.DECIMAL,
-      userId: DataTypes.INTEGER,
-      operationType: DataTypes.ENUM,
+      amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        validate: {
+          isDecimal: true,
+          isPositive (value) {
+            if (value <= 0) {
+              throw new Error('amount must be positive');
+            }
+          },
+        },
+      },
+      operationType: {
+        type: DataTypes.ENUM('INCOME', 'EXPENSE'),
+        allowNull: false,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          isInt: true,
+        },
+      },
     },
     {
-      sequelize,
-      modelName: 'Transaction',
+      timestamps: true,
     }
   );
+
+  Transaction.associate = models => {
+    Transaction.belongsTo(models.Users, {
+      foreignKey: { name: 'userId', allowNull: false },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    });
+  };
+
   return Transaction;
 };

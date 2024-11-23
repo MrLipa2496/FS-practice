@@ -300,7 +300,7 @@ module.exports.getContests = async (req, res, next) => {
       limit,
       offset = 0,
       ownEntries,
-    } = req.body;
+    } = req.query;
 
     const predicates = UtilFunctions.createWhereForAllContests(
       typeIndex,
@@ -312,13 +312,13 @@ module.exports.getContests = async (req, res, next) => {
     const contests = await db.Contests.findAll({
       where: predicates.where,
       order: predicates.order,
-      limit: limit,
-      offset: offset,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
       include: [
         {
           model: db.Offers,
-          required: ownEntries,
-          where: ownEntries ? { userId: req.tokenData.userId } : {},
+          required: ownEntries === 'true',
+          where: ownEntries === 'true' ? { userId: req.tokenData.userId } : {},
           attributes: ['id'],
         },
       ],

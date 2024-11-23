@@ -8,10 +8,9 @@ const validators = require('../middlewares/validators');
 const chatController = require('../controllers/chatController');
 const upload = require('../utils/fileUpload');
 const contestsRouter = require('./contestsRouter');
+const usersRouter = require('./usersRouter');
 
 const router = express.Router();
-
-router.use('/contests', contestsRouter);
 
 router.post(
   '/registration',
@@ -21,21 +20,48 @@ router.post(
 );
 
 router.post('/login', validators.validateLogin, userController.login);
+
 router.post('/getUser', checkToken.checkAuth);
 
-router.post(
-  '/dataForContest',
-  checkToken.checkToken,
-  contestController.dataForContest
-);
-
 // public endpoint before checkToken.checkToken
+// TODO offerRouter, offerController
+router.get('/offers', contestController.getOffers);
 
 router.use(checkToken.checkToken);
 
+// private endpoint after checkToken.checkToken
+
+router.use('/users', usersRouter);
 router.use('/contests', contestsRouter);
 
-// privat endpoint after checkToken.checkToken
+router.post('/dataForContest', contestController.dataForContest);
+
+router.post(
+  '/getAllContests',
+  basicMiddlewares.onlyForCreative,
+  contestController.getContests
+);
+
+router.get('/downloadFile/:fileName', contestController.downloadFile);
+
+router.post(
+  '/updateContest',
+  upload.updateContestFile,
+  contestController.updateContest
+);
+
+router.post(
+  '/setNewOffer',
+  upload.uploadLogoFiles,
+  basicMiddlewares.canSendOffer,
+  contestController.setNewOffer
+);
+
+router.post(
+  '/setOfferStatus',
+  basicMiddlewares.onlyForCustomerWhoCreateContest,
+  contestController.setOfferStatus
+);
 
 router.post(
   '/changeMark',
